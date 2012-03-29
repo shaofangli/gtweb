@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>登录校验</title>
+	<link rel="stylesheet" type="text/css" href="${request.contextPath}/css/om-all.css" />
+	<link rel="stylesheet" type="text/css" href="${request.contextPath}/css/demo.css" />
+	<link rel="stylesheet" type="text/css" href="${request.contextPath}/css/login-validate.css" />
+	<script type="text/javascript" src="${request.contextPath}/js/jquery.min.js"></script>
+	<script type="text/javascript" src="${request.contextPath}/js/ui//om-validate.js"></script>
+	<script type="text/javascript" src="${request.contextPath}/js/ui//om-ajaxsubmit.js"></script>
+	<!-- view_source_begin -->
+	<script type="text/javascript">
+		$(document).ready(function() {
+			 var qurl='${request.contextPath}/fast/login';
+			 var purl='${request.contextPath}/pages/manage';
+		     //点击刷新验证码功能
+		     $('#loginForm img').click(function(){
+		         //因为浏览器默认会缓存图片，所以只要改变url就可以跳过缓存
+		         //每次在url后面添加随机数就可以保证url不重复
+		         this.src='../../validateCode.image?'+new Date().getTime();
+		     });
+		     $("#loginForm").validate({
+		          errorLabelContainer : "#errorMessages",
+		          rules : {
+                    zh : "required",
+                    mm : "required"
+                  },
+                  messages : {
+                    zh : {required : "请输入用户名！"},
+                    mm : {required : "请输入密码！"}
+                  },
+                  submitHandler : function(){
+                    //以ajax方式到后台进行登录
+                    $("#loginForm").omAjaxSubmit({
+                        url :qurl+'/login',
+                        beforeSubmit:function(){
+                            //登录前为登录按钮添加loading效果
+                           $('#loginForm').addClass('status'); 
+                        },
+                        success:function(responseText,statusText, xhr, $form){
+                            //登录后不管成功还是失败都去掉登录按钮的loading效果
+                           $('#login').removeClass('status');
+                            //如果登录成功转到主页面，如果登录失败把错误信息显示出来
+                            if(responseText=='true'){
+                                self.location.href=purl+'/manage.vm';
+                            }else{
+                                $('#errorMessages').html(responseText).show();
+                            }
+                        }
+                    });
+                    return false;
+                  }
+		     });
+		});
+
+	</script>
+	<!-- view_source_end -->
+	</head>
+	<body bgcolor="#87CEEB">
+	   <!-- view_source_begin -->
+		<form id="loginForm">
+			<table border="0" cellspacing="0" cellpadding="0" style="padding-top:10%;padding-left: 40%;">
+				<tr>
+				    <td colspan="2">
+					   <div id="errorMessages"></div>
+					</td>
+				</tr>
+				<tr>
+					<td width="75" align="right">
+					<label>用户名：</label>
+					</td>
+					<td width="245">
+    				<input type="text" name="zh"/>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+					<label>密　码：</label>
+					</td>
+					<td>
+					<input type="password" name="mm"/>
+					</td>
+				</tr>
+                <tr>
+					<td colspan="2" align="center">
+					<button id="loginForm" type="submit">登录</button>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>

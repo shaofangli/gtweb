@@ -1,0 +1,7 @@
+<div id="hs">
+<li>
+<a href="${request.contextPath}/report/v/1/654321"/>页面1</a>
+<a href="${request.contextPath}/report/v/2/654321"/>页面2</a>
+<a href="${request.contextPath}/report/v/3/654321"/>页面3</a>
+</li>
+</div>

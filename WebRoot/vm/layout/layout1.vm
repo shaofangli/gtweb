@@ -1,0 +1,16 @@
+<html>  
+	<head>
+		<title>$stitle</title>
+		<link rel="stylesheet" type="text/css" href="${request.contextPath}/css/demo.css" />
+	</head>
+    <body>
+        <div id="header">#parse('/vm/layout/header.vm')</div>
+        <hr/> 
+        <div id="content">  
+            <div id="sub">#parse($sub)</div>  
+            <div id="main">$screen_content</div>  
+        </div>
+        <hr/>
+        <div id="footer">#parse('/vm/layout/footer.vm')</div>  
+    </body>  
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" >
+	<script src="${request.contextPath}/js/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="${request.contextPath}/js/ui/om-core.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/js/ui/om-mouse.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/js/ui/om-resizable.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/js/ui/om-grid.js"></script>
+	<script type="text/javascript" src="${request.contextPath}/js/ui/om-dialog.js"></script>
+	<script type="text/javascript" src="${request.contextPath}/js/ui/om-position.js"></script>
+	<script type="text/javascript" src="${request.contextPath}/js/ui/om-draggable.js"></script>
+	<script type="text/javascript" src="${request.contextPath}/js/ui/om-button.js"></script>
+	<script type="text/javascript" src="${request.contextPath}/js/ui/om-validate.js"></script>
+	<script type="text/javascript" src="${request.contextPath}/js/ui/om-ajaxsubmit.js"></script>
+	<script type="text/javascript" src="${request.contextPath}/js/ui/om-messagetip.js"></script>
+	<script type="text/javascript" src="${request.contextPath}/js/ui/om-messagebox.js"></script>
+	<script type="text/javascript" src="${request.contextPath}/js/ui/om-tree.js"></script>
+	<script type="text/javascript" src="${request.contextPath}/js/ui/om-fileupload.js"></script>
+	
+    <link rel="stylesheet" type="text/css" href="${request.contextPath}/css/om-all.css" />
+	<link rel="stylesheet" type="text/css" href="${request.contextPath}/css/base.css" />
+	<link rel="stylesheet" type="text/css" href="${request.contextPath}/css/demo.css"/>
+	<style>
+        #tpForm label {color:red;}
+		#droplist{
+	        display:none; 
+	        position: fixed; 
+	        width:200px;
+	        /* 兼容IE6,7 */
+	        *width:258px;
+	        /* 兼容IE8 */
+	        width:200px\0;
+	        height:200px;
+	        border:1px solid;
+	        overflow: auto;
+			background:#FFFFFF;
+     	}
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function() {
+			$('#create').omButton({});
+			$('#modify').omButton({});
+			$('#delete').omButton({});
+			$('#query').omButton({});
+			$('#tpfile_upload_but').omButton({});
+			var qurl='${request.contextPath}/fast/tpgl';
+			var selectIds = [];
+			//图片上传控件定义:
+			$('#tpfile_upload').omFileUpload({
+        	    action : qurl+'/uploadimg',
+        	    swf : '${request.contextPath}/swf/om-fileupload.swf',
+        	  	fileExt : '*.jpg;*.png;*.gif',
+        	  	fileDesc : '图片文件',
+				removeCompleted:true,
+				onComplete:function(ID,fileObj,rs,data,event){
+						if(rs.indexOf('失败')!=-1){
+							$.omMessageBox.alert({content:rs});
+						}else{
+							$("input[name='src']",dialog).val(rs);
+						}
+					}
+	  		});
+            $('#tpgl_grid').omGrid({
+                title: "图片管理",
+                dataSource : qurl+'/list',
+				limit : 50, //分页显示，每页显示多少条
+                showIndex : false,//显示索引
+                singleSelect : false,
+				errorMsg : '获取数据发生异常!',
+				method:'post',
+                colModel : [ {header : 'ID', name : 'id', width : 20,align : 'center'}, 
+                             {header : '图片标题', name : 'nm', width : 100,align : 'left'}, 
+							 {header : '图片类型', name : 'lxnm', width : 50,align : 'left'},
+                             {header : '图片地址', name : 'src', align : 'left', width : 50},
+							 {header : '点击图片超链接到地址', name : 'href', align : 'left', width : 150,renderer:function(v,row,rowdata){
+							 	if(rowdata.href)
+							 		return '<a target="_blank" href="'+rowdata.href+'">'+rowdata.href+'</a>';
+								else return '';
+							 }},
+							 {header : '更新日期', name : 'gxrq', width : 200,align : 'center'}, 
+                             {header : '操作人', name : 'czr', width : 50,align : 'left'},
+							 {header : '',width : 50,align : 'left',renderer:function(v,row,rowdata){
+							 	return '<a target="_blank" href="'+rowdata.src+'" class="demo-new-window">预览</a>';
+							 }},
+							 {header : '图片类型ID', name : 'lx', width : 1,align : 'left'}
+							],
+				onRowSelect : function(index, data){
+                			if($.inArray(data.id, selectIds)== -1)
+                       			selectIds.push(data.id);
+            				},
+            	onRowDeselect : function(index, data){
+                			var i = $.inArray(data.id, selectIds);
+                			selectIds.splice(i,1);
+            				},
+				onRefresh : function(nowpage, records){
+							selectIds = [];
+            				}
+            });
+			var dialog = $("#tp-form-dialog").omDialog({
+                width: 550,
+                autoOpen : false,
+                modal : true,
+                resizable : false,
+                buttons : {
+                    "提交" : function(){
+		                submitDialog();
+		                return false; //阻止form的默认提交动作
+		            },
+                    "取消" : function() {
+                        $("#tp-form-dialog").omDialog("close");//关闭dialog
+                    }
+                }
+            });
+            //显示dialog并初始化里面的输入框的数据
+            var showDialog = function(title,rowData){
+				$("#tp-form-dialog").omDialog("setBtnTxt",1,title);
+                validator.resetForm();
+                rowData = rowData || {};
+                $("input[name='id']",dialog).val(rowData.id);
+                $("input[name='nm']",dialog).val(rowData.nm);
+				$("input[name='lx']",dialog).val(rowData.lx);
+                $("input[name='src']",dialog).val(rowData.src);
+				$("input[name='href']",dialog).val(rowData.href);
+				$("input[name='position']",dialog).val(rowData.lxnm);
+                dialog.omDialog("option", "title", title);
+                dialog.omDialog("open");//显示dialog
+            };
+            //dialog中点提交按钮时将数据提交到后台并执行相应的add或modify操作
+            var submitDialog = function(){
+                if (validator.form()) {
+	                var submitData={
+	                    operation:isAdd?'/insert':'/update',
+						id:$("input[name='id']",dialog).val(),
+	                    nm:$("input[name='nm']",dialog).val(),
+						lx:$("input[name='lx']",dialog).val(),
+	                    src:$("input[name='src']",dialog).val(),
+						href:$("input[name='href']",dialog).val()
+	                };
+	                $.post(qurl+submitData.operation,submitData,function(rs){
+	                    if(isAdd){
+	                        $('#tpgl_grid').omGrid('reload',1);//如果是添加则滚动到第一页并刷新
+	                    }else{
+	                        $('#tpgl_grid').omGrid('reload');//如果是修改则刷新当前页
+	                    }
+						$.omMessageBox.alert({content:rs});
+	                    $("#tp-form-dialog").omDialog("close"); //关闭dialog
+	                });
+                }
+            };
+            var isAdd = true; //弹出窗口中是添加操作还是修改操作？
+            $('#create').bind('click', function() {
+                isAdd = true;
+                showDialog('新增图片');//显示dialog
+            });
+            $('#modify').bind('click', function() {
+                var selections=$('#tpgl_grid').omGrid('getSelections',true);
+                if (selections.length == 0) {
+                    $.omMessageBox.alert({content:'请至少选择一行记录'});
+                    return false;
+                }
+                isAdd = false;
+                showDialog('修改图片',selections[0]);//显示dialog
+            });
+            $('#delete').bind('click', function(e) {
+                if (selectIds.length == 0) {
+                    $.omMessageBox.alert({content:'请至少选择一行记录进行删除操作'});
+                    return false;
+                }
+				$.omMessageBox.confirm({
+                    title:'确认删除',
+                    content:'删除记录不可恢复，你确定要删除吗？',
+                    onClose:function(value){
+                         if(value){
+						 	$.post(qurl+'/delete',{ids:selectIds.toString(),ids_len:selectIds.length},function(rs){
+                                $('#tpgl_grid').omGrid('reload');//刷新当前页数据
+            					selectIds = [];
+                                $.omMessageBox.alert({content:rs});
+                            });
+						 }
+                    }
+            	});
+            });
+            $('#query').bind('click', function(e) {
+                var qbt=$('#qbt').val();
+                if(qbt===""){ //没要有查询条件，要显示全部数据
+                    $('#tpgl_grid').omGrid("setData", qurl+'/list');
+                }else{ //有查询条件，显示查询数据
+                    $('#tpgl_grid').omGrid("setData", qurl+'/list?t.nm='+encodeURI(qbt));
+                }
+            });
+			 // 对表单进行校验
+            var validator = $('#tpForm').validate({
+                rules : {
+                    nm : {required: true}, 
+                    lx : {required : true},
+                    src: {required : true}
+                }, 
+                messages : {
+                    nm : {required : "图片标题不能为空!"},
+                    lx : {required : "图片类型不能为空!"},
+                    src : {required : "图片地址不能为空!"}
+                }
+            });
+			//树start-----------------------------------------------------------------------/
+            $("#tree").omTree({
+                dataSource : '${request.contextPath}/fast/lxgl/tree?pid=LX_TP_ID',
+                onSelect: function(nodedata){
+                	   /**
+                	   var ndata = nodedata, text = ndata.text;
+            		   ndata = $("#tree").omTree("getParent",ndata);
+                	   while(ndata){
+                		   text = ndata.text +"-" +text;
+                		   ndata = $("#tree").omTree("getParent",ndata);
+                	   }*/
+                	   $("#position").val(nodedata.text);
+                	   $("#lx").val(nodedata.value);
+                	   hideDropList();
+                },
+               onBeforeSelect: function(nodedata){
+            	   /**如果选中的是非叶子叶节点不回填
+            	   if(nodedata.children){
+            		   return false;
+            	   }*/
+               }
+            });
+            //点击下拉按钮显示下拉列表
+            $("#choose").click(function(){
+            	showDropList();
+            });
+            //点击输入框显示下拉列表
+            $("#position").val("").click(function(){
+            	showDropList();
+            });
+            function showDropList(){
+            	var cityInput = $("#position");
+            	var cityOffset = cityInput.offset();
+            	var topnum = cityOffset.top+cityInput.outerHeight();
+            	if($.browser.msie&&($.browser.version == "6.0"||$.browser.version == "7.0")){
+            		topnum = topnum + 2;
+            	}
+            	$("#droplist").css({left: cityOffset.left + "px",top: topnum +"px"})
+            	              .show();
+            	//body绑定mousedown事件，当事件对象非下拉框、下拉按钮等下拉列表隐藏。
+            	$("body").bind("mousedown", onBodyDown);
+            }
+            function hideDropList() {
+    			$("#droplist").hide();
+    			$("body").unbind("mousedown", onBodyDown);
+    		}
+    		function onBodyDown(event) {
+    			if (!(event.target.id == "choose" || event.target.id == "droplist" || $(event.target).parents("#droplist").length>0)) {
+    				hideDropList();
+    			}
+    		}
+    		//树end-----------------------------------------------------------------------/
+        });
+    </script>
+</head>
+<body>
+	<!-- 查询条件及按钮 -->
+	<div id="tbdiv">
+        <input id="create" type="button" value="新增"/>
+        <input id="modify" type="button" value="修改"/>
+        <input id="delete" type="button" value="删除"/>
+        图片标题(模糊查询，为空时显示全部)：<input id="qbt"></input>
+        <input id="query" type="button" value="查询"/>
+    </div>
+	<!-- 显示图片列表 -->
+    <table id="tpgl_grid"></table>
+	<!-- 新增或修改窗口 -->
+	<div id="tp-form-dialog">
+        <form id="tpForm">
+	        <input name="id" style="display: none"/>
+	        <table>
+	            <tr>
+	                <td>图片标题：</td>
+	                <td><input name="nm" /></td>
+	            </tr>
+	            <tr>
+	                <td>图片类型：</td>
+	                <td>
+						<span class="om-combo om-widget om-state-default">
+					        	<input type="hidden" id="lx" name="lx"/>
+					            <input type="text" id="position" name="position" readonly="readonly">
+					            <span id="choose" class="om-combo-trigger"></span>
+					    </span>
+					    <div id="droplist" >
+						    <ul id="tree" style="text-align:left;"></ul>
+						</div>
+					</td>
+	            </tr>
+	            <tr>
+	                <td>图片地址：</td>
+	                <td><input name="src" style="width:250px"/></td>
+	            </tr>
+				<tr>
+	                <td>点击图片链接到地址：</td>
+	                <td><input name="href" style="width:250px"/></td>
+	            </tr>
+			</table>
+        </form>
+		 <table>
+			<tr>
+	           <td>图片文件：</td>
+                <td>
+					<input id="tpfile_upload" name="tpfile_upload" type="file" />
+					<button id="tpfile_upload_but" onclick="$('#tpfile_upload').omFileUpload('upload')">上传图片</button>
+				</td>
+	        </tr>
+	     </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+#set($layout = "layout1.vm")
+#set($sub= "/vm/user/sub.vm" )  
+#set($stitle="用户界面1")
+A: What's your name?<br>  
+B: My name is 子页面1
+$page_bd
+
+<div class="style1"><h5><a href="/">1</a></h5></div>
+<div class="style2"><h5><a href="/">2</a></h5></div>
+<div class="style6"><h5>3</h5></div>
+<div class="style3"></div>
+<div class="style4"></div>
+<div class="style5"></div>
+<div class="style7"></div>
+<div class="style8"></div>
+<div class="style9"></div>
+<div class="style10"></div>
+<div class="style11"></div>
+<div class="style12"></div>
+<div class="style13"></div>
+<div class="style14"></div>
+<div class="style15"></div>
+<div class="style16"></div>

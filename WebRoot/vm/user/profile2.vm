@@ -1,0 +1,15 @@
+#set($layout = "layout2.vm")
+#set($sub= "/vm/user/sub.vm" )  
+#set($stitle="用户界面2")
+<table border="1" class="t3">
+<thead>
+    <th width="10%">ID</th>
+    <th width="30%">姓名</th>
+    <th width="20%">性别</th>
+    <th width="30%">年龄</th>
+    <th width="10%">事业</th>
+</thead>
+#foreach($u in $page_array)
+<tr class="a1"><td>$u.id</td><td>$u.name</td><td>$u.sex</td><td>$u.age</td><td>$u.career</td></tr>
+#end
+</table>

@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" >
+	<title>湖南省长沙市港通科技有限公司</title>
+	<link href="${request.contextPath}/css/css.css" rel="stylesheet" type="text/css" />
+	<script src="${request.contextPath}/js/focus.js" type="text/javascript"></script>
+    <style type="text/css">
+    	a:link {
+        	text-decoration: none;
+        }
+        a:visited {
+        	text-decoration: none;
+        }
+        a:hover {
+        	text-decoration: none;
+        }
+        a:active {
+        	text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+	<div id="container">
+	<!--------头部区域-------->
+		<div id="header">  
+			<div id="logo"><img src="${request.contextPath}/css/images/logo.png" width="160" height="85" align="left" /></div>
+			<div id="menu">
+			<ul>
+				<li><a href="${request.contextPath}/fast/web/index">首页</a></li>
+				<li><a href="${request.contextPath}/fast/web/news" class="active">新闻动态</a></li>
+				<li><a href="${request.contextPath}/fast/web/qualification">公司资质</a></li>
+				<li><a href="${request.contextPath}/fast/web/solution">解决方案</a></li>
+				<li><a href="${request.contextPath}/fast/web/about">关于我们</a></li>
+				<li><a href="${request.contextPath}/fast/web/contact">联系我们</a></li>
+			</ul>
+			</div>
+			<div id="banner"></div>
+		</div></div>
+		<!--------主体区域-------->
+		<div id="main2">
+			<div id="left_pan">
+			<!-- 新闻类型列表 -->
+    			<ul>
+    			#foreach($lx in $lxs.rows)
+        				<li><a target="xw-list-frame" href="${request.contextPath}/fast/web/news/$lx.id/list">$lx.nm</a></li>
+    			#end
+    			</ul>
+			</div>
+			<div id="rightPan">
+				<!-- 新闻列表 -->
+				<iframe id="xw-list-frame" name="xw-list-frame" frameborder="0" src="${request.contextPath}/fast/web/news/6/list" width="610px" height="400px" marginWidth=0 frameSpacing=0 marginHeight=0 frameBorder=0 noResize scrolling=auto vspale="0"></iframe>
+			</div>
+		</div>
+		<!--页面底部,(版权说明)-->
+		  <div id="footer_bg">
+		  	<div id="footer">
+	 		  <p style="float: none; text-align: right;"><a href="#">湖南省港通科技有限公司</a><br/>
+	 		  	<a>公司邮箱:stoneling@126.com</a><br/>
+		&copy; Copyright 2012,公司地址: <a href="#">湖南省长沙市德雅路583号</a></p>
+				 </div>
+		  </div>
+	</div>
+</body>
+</html>

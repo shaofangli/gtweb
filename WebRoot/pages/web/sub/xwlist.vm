@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<div id="rightPan">
+		<!-- 新闻列表 -->
+		<ul>
+		#foreach($xw in $xws.rows)
+				<li><a  href="${request.contextPath}/fast/wzgl/getcontent/$xw.id">$xw.bt</a></li>
+		#end
+		</ul>
+	</div>
+</body>
+</html>

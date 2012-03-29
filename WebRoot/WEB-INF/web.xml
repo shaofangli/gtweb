@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<!-- servlets -->
+	<servlet>
+		<servlet-name>RestServlet</servlet-name>
+		<servlet-class>org.msf.web.RestServlet</servlet-class>
+		<init-param>
+			<param-name>control_packages</param-name>
+			<param-value>org.controls</param-value>
+		</init-param>
+		<init-param>
+			<param-name>maingwt</param-name>
+			<param-value>testgwt</param-value>
+		</init-param>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RestServlet</servlet-name>
+		<url-pattern>/fast/*</url-pattern>
+	</servlet-mapping>
+	<!-- filters -->
+	<filter>
+		<filter-name>LoginFilter</filter-name>
+		<filter-class>org.filters.LoginFilter</filter-class>
+
+	</filter>
+	<filter-mapping>
+		<filter-name>LoginFilter</filter-name>
+		<url-pattern>/pages/manage/*</url-pattern>
+	</filter-mapping>
+
+	<!-- velocity -->
+	<servlet>
+		<servlet-name>velocity</servlet-name>
+		<servlet-class>org.VelocityServlet</servlet-class>
+		<init-param>
+			<param-name>org.apache.velocity.properties</param-name>
+			<param-value>/WEB-INF/velocity.properties</param-value>
+		</init-param>
+
+		<load-on-startup>10</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>velocity</servlet-name>
+		<url-pattern>*.vm</url-pattern>
+	</servlet-mapping>
+</web-app>

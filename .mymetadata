@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="gtweb"
+  id="myeclipse.1315764182468"
+  context-root="/gtweb"
+  j2ee-spec="5.0"
+  archive="gtweb.war">
+  <attributes>
+    <attribute name="webrootdir" value="/WebRoot" />
+  </attributes>
+</project-module>
+

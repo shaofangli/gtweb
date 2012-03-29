@@ -1,0 +1,6 @@
+#set($layout = "layout1.vm")
+#set($sub= "/vm/user/sub.vm" )  
+#set($stitle="用户界面3")
+A: What's your name?<br>  
+B: My name is 子页面3
+$page_hd
