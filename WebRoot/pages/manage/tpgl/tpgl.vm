@@ -58,7 +58,10 @@
 						if(rs.indexOf('失败')!=-1){
 							$.omMessageBox.alert({content:rs});
 						}else{
-							$("input[name='src']",dialog).val(rs);
+							var urls = rs.split(",");
+							$("input[name='src']",dialog).val(urls[0]);
+							$("input[name='surl']",dialog).val(urls[1]);
+							$("input[name='durl']",dialog).val(urls[2]);
 						}
 					}
 	  		});
@@ -124,6 +127,7 @@
                 $("input[name='src']",dialog).val(rowData.src);
 				$("input[name='href']",dialog).val(rowData.href);
 				$("input[name='position']",dialog).val(rowData.lxnm);
+				$("input[name='zsurl']",dialog).val(rowData.src);
                 dialog.omDialog("option", "title", title);
                 dialog.omDialog("open");//显示dialog
             };
@@ -136,7 +140,10 @@
 	                    nm:$("input[name='nm']",dialog).val(),
 						lx:$("input[name='lx']",dialog).val(),
 	                    src:$("input[name='src']",dialog).val(),
-						href:$("input[name='href']",dialog).val()
+						href:$("input[name='href']",dialog).val(),
+						surl:$("input[name='surl']",dialog).val(),
+						durl:$("input[name='durl']",dialog).val(),
+						zsurl:$("input[name='zsurl']",dialog).val()
 	                };
 	                $.post(qurl+submitData.operation,submitData,function(rs){
 	                    if(isAdd){
@@ -300,6 +307,9 @@
 	                <td><input name="href" style="width:250px"/></td>
 	            </tr>
 			</table>
+			<input type="hidden" name="surl" />
+			<input type="hidden" name="durl" />
+			<input type="hidden" name="zsurl" />
         </form>
 		 <table>
 			<tr>

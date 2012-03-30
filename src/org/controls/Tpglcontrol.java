@@ -54,6 +54,14 @@ public class Tpglcontrol {
 	public String update(ControlParam params) {
 		try {
 			if (dao.update(params.params2bean(Gt_w_tp.class))) {
+				if (!MyUtil.isEmpty(params.get("durl"))
+						&& !params.get("zsurl").equalsIgnoreCase(
+								params.get("src"))) {
+					upload.tosmallerpic(params.getRealPathByParam("zsurl"),
+							params.getRealPathByParam("durl"), params
+									.getRealPathByParam("surl"), null,
+							Statics.TP_SY_WIDTH, Statics.TP_SY_HEIGHT, 0.65f);
+				}
 				return "更新图片成功!";
 			} else {
 				return MyUtil.returnMsg("更新图片失败!", "red");
@@ -105,13 +113,13 @@ public class Tpglcontrol {
 	@ControlMapping(path = "/uploadimg")
 	public String uploadImg(ControlParam params) {
 		try {
-			String src = upload.defaultProcessFileUpload(params
+			String srcs = upload.defaultProcessFileUpload(params
 					.getHttpRequest());
 			if ("onerror".equals(params.get("testcase")))
 				throw new IOException("io异常!");
-			if (src == null)
+			if (srcs == null)
 				throw new Exception("上传失败!");
-			return src;
+			return srcs;
 		} catch (Exception x) {
 			return MyUtil.returnMsg("上传失败:" + x.getMessage(), "red");
 		}

@@ -24,6 +24,7 @@ import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public class Fileupload {
 	byte[] imgBufTemp = new byte[102401];
+	private String tmpfath = null;
 
 	@SuppressWarnings("unchecked")
 	public String defaultProcessFileUpload(HttpServletRequest request)
@@ -64,7 +65,7 @@ public class Fileupload {
 						i++;
 					}
 				}
-				return fileUrl;
+				return fileUrl + "," + tmpfath + "," + Statics.UPLOAD_IMG_PATH;
 			}
 		} catch (FileUploadException e) {
 			throw e;
@@ -81,6 +82,14 @@ public class Fileupload {
 				} catch (Exception e) {
 				}
 			}
+			// try {
+			// Tosmallerpic(ppath, this.f, null, Statics.TP_SY_WIDTH,
+			// Statics.TP_SY_HEIGHT, 0.65f);
+			// } catch (Exception x) {
+			//				
+			// }finally{
+			// this.f.delete();
+			// }
 		}
 		return null;
 	}
@@ -95,12 +104,18 @@ public class Fileupload {
 	public File getSavePath(ServletContext servletContext, String fileName)
 			throws IOException {
 		String realPath = servletContext.getRealPath("/");
-		File f = new File(realPath + Statics.UPLOAD_IMG_PATH + fileName);
 		File p = new File(realPath + Statics.UPLOAD_IMG_PATH);
+
+		File tf = new File(realPath + Statics.UPLOAD_FILE_TEMP + fileName);
+		File pf = new File(realPath + Statics.UPLOAD_FILE_TEMP);
 		if (!p.exists()) {
 			p.mkdirs();
 		}
-		return f;
+		if (!pf.exists()) {
+			pf.mkdirs();
+		}
+		tmpfath = Statics.UPLOAD_FILE_TEMP + fileName;
+		return tf;
 	}
 
 	/**
@@ -116,10 +131,12 @@ public class Fileupload {
 	/**
 	 * 压缩图片大小
 	 * 
+	 * @param up_filepath
+	 *            如果是修改,此项为修改前原始图片路径
 	 * @param f_directory
-	 *            图片所在的文件夹路径
-	 * @param source_file
-	 *            图片路径
+	 *            生成新的图片所在的文件夹路径
+	 * @param sourcefile
+	 *            源文件图片完整路径
 	 * @param zdy_fileNm
 	 *            自定义图片名字(null则用源图片名)
 	 * @param w
@@ -130,11 +147,13 @@ public class Fileupload {
 	 *            清晰度百分比(越大质量越好)
 	 * @throws IOException
 	 */
-	public void Tosmallerpic(String f_directory, File source_file,
-			String zdy_fileNm, int w, int h, float per) throws IOException {
+	public void tosmallerpic(String up_filepath, String d_directory,
+			String s_filepath, String zdy_fileNm, int w, int h, float per)
+			throws IOException {
 		Image src;
+		File source_file = new File(s_filepath);
 		src = javax.imageio.ImageIO.read(source_file); // 构造Image对象
-		String img_midname = f_directory
+		String img_midname = d_directory+"/"
 				+ (zdy_fileNm == null ? source_file.getName() : zdy_fileNm
 						+ source_file.getName().substring(
 								source_file.getName().lastIndexOf('.')));
@@ -168,5 +187,9 @@ public class Fileupload {
 		encoder.encode(tag, jep);
 		// encoder.encode(tag); //近JPEG编码
 		newimage.close();
+		source_file.delete();
+		File u_file = new File(up_filepath);
+		if (u_file.exists())
+			u_file.delete();
 	}
 }
