@@ -24,7 +24,7 @@ public class LxglDao extends AbstractDao {
 	 *            传入一个父节点Node
 	 */
 	public void treedata(int pid, Node pnode) {
-		List<Gt_w_lx> data = QueryHelper.query(Statics.dbNm, Gt_w_lx.class,
+		List<Gt_w_lx> data = QueryHelper.queryList(Statics.dbNm, Gt_w_lx.class,
 				"select * from gt_m_lx where pid=?", pid);
 
 		for (Gt_w_lx lx : data) {
@@ -49,7 +49,7 @@ public class LxglDao extends AbstractDao {
 	 * @throws Exception
 	 */
 	public boolean caninsert(int id) throws Exception {
-		Gt_w_lx lx = QueryHelper.query(Statics.dbNm, Gt_w_lx.class,
+		Gt_w_lx lx = QueryHelper.queryList(Statics.dbNm, Gt_w_lx.class,
 				"SELECT bz FROM gt_m_lx where id=?", id).get(0);
 		if (lx.getBz() == 0) {
 			return Boolean.FALSE;

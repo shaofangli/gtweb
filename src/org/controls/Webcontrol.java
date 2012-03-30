@@ -13,6 +13,7 @@ import org.msf.web.ControlMapping;
 import org.msf.web.ControlMarked;
 import org.msf.web.ControlParam;
 import org.msf.web.ControlRender;
+import org.utils.MyUtil;
 
 /**
  * web管理
@@ -65,8 +66,8 @@ public class Webcontrol {
 	public ControlRender news(ControlParam params) {
 		try {
 			HashMap<String, Object> wheremap = new HashMap<String, Object>();
-			wheremap.put("l.pid",Statics.DB_TB_MAP.get("LX_NEWS_ID"));
-			
+			wheremap.put("l.pid", Statics.DB_TB_MAP.get("LX_NEWS_ID"));
+
 			params.set("wzid", wzdao.getSWzByLxId(
 					Statics.DB_TB_MAP.get("LX_NEWS_ID")).getId());
 			// 类型列表;
@@ -155,8 +156,16 @@ public class Webcontrol {
 		try {
 			// 新闻列表;
 			wzdao.initsql(WzglDao.sql2, WzglDao.csql2);
-			params.set("xws", wzdao.getGridDataModel(Gt_w_wz.class, 1,
-					Statics.pcount, null, params.getPathParam("news_lx"),params.getPathParam("news_lx")));
+			int rpage = Integer.parseInt(MyUtil
+					.setEmpty(params.get("rpage"), 1).toString());
+			int limit = Integer.parseInt(MyUtil.setEmpty(params.get("limit"),
+					Statics.pcount).toString());
+			int news_lx = MyUtil.isEmpty(params.getPathParam("news_lx")) ? Statics.DB_TB_MAP
+					.get("LX_NEWS_ID")
+					: Integer.valueOf(params.getPathParam("news_lx"));
+			System.out.println(rpage + " " + limit + " " + news_lx);
+			params.set("xws", wzdao.getGridDataModel(Gt_w_wz.class, rpage,
+					limit, null, news_lx, news_lx));
 		} catch (Exception x) {
 			x.printStackTrace();
 		}

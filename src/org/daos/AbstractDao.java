@@ -32,12 +32,12 @@ public abstract class AbstractDao implements Dao {
 		Object[] parms = initPreSql(wheremap, get_sql(), get_csql(), args);
 		GridDataModel<T> localGridDataModel = new GridDataModel<T>();
 		if (!MyUtil.isEmpty(parms)) {
-			localGridDataModel.setRows(QueryHelper.query_slice(Statics.dbNm,
+			localGridDataModel.setRows(QueryHelper.queryList_slice(Statics.dbNm,
 					beanClass, psql.toString(), page, pcount, parms));
 			localGridDataModel.setTotal(QueryHelper.total(Statics.dbNm, csql
 					.toString(), parms));
 		} else {
-			localGridDataModel.setRows(QueryHelper.query_slice(Statics.dbNm,
+			localGridDataModel.setRows(QueryHelper.queryList_slice(Statics.dbNm,
 					beanClass, psql.toString(), page, pcount));
 			localGridDataModel.setTotal(QueryHelper.total(Statics.dbNm, csql
 					.toString()));

@@ -6,6 +6,7 @@ import java.util.List;
 import org.beans.Gt_w_tp;
 import org.commons.Statics;
 import org.daos.AbstractDao;
+import org.ext.cache.MyCacheManager;
 import org.ext.dbutil.QueryHelper;
 
 public class TpglDao extends AbstractDao {
@@ -23,7 +24,8 @@ public class TpglDao extends AbstractDao {
 	 * @return
 	 */
 	public List<Gt_w_tp> getTpByLx(String lx) {
-		return QueryHelper.query(Statics.dbNm, Gt_w_tp.class,
+		return QueryHelper.queryList_cache(Statics.dbNm, Gt_w_tp.class,
+				"TP_CACHE", "KEY_WEB_TP_" + lx,
 				"select id,nm,src,gxrq,czr,lx,href from gt_w_tp where 1=? and lx=? limit "
 						+ Statics.csyimg, 1, lx);
 	}
@@ -54,16 +56,17 @@ public class TpglDao extends AbstractDao {
 	 * @return
 	 */
 	public boolean update(Gt_w_tp bean) throws Exception {
-		boolean bol = Boolean.FALSE;
 		int rs = QueryHelper
 				.update(
 						Statics.dbNm,
 						"update gt_w_tp set nm=?,src=?,lx=?,gxrq=now(),czr='admin',href=? where id=?",
 						bean.getNm(), bean.getSrc(), bean.getLx(), bean
 								.getHref(), bean.getId());
-		if (rs > 0)
+		if (rs > 0) {
+			clearTpCache();
 			return Boolean.TRUE;
-		return bol;
+		}
+		return Boolean.FALSE;
 	}
 
 	/**
@@ -74,8 +77,8 @@ public class TpglDao extends AbstractDao {
 	 * @throws UnsupportedEncodingException
 	 */
 	public String getSrc(String sid) throws UnsupportedEncodingException {
-		return QueryHelper.query(Statics.dbNm, Gt_w_tp.class, _ftbid, sid).get(
-				0).getSrc();
+		return QueryHelper.queryList(Statics.dbNm, Gt_w_tp.class, _ftbid, sid)
+				.get(0).getSrc();
 	}
 
 	/**
@@ -106,6 +109,14 @@ public class TpglDao extends AbstractDao {
 		if (rs.length == delids.length)
 			return Boolean.TRUE;
 		return bol;
+	}
+
+	/**
+	 * 清除图片缓存
+	 */
+	private void clearTpCache() {
+		MyCacheManager.clear("TP_CACHE", "KEY_WEB_TP_"
+				+ Statics.DB_TB_MAP.get("LX_TP_SY_ID"));
 	}
 
 	@Override

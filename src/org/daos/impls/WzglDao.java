@@ -6,6 +6,7 @@ import java.util.List;
 import org.beans.Gt_w_wz;
 import org.commons.Statics;
 import org.daos.AbstractDao;
+import org.ext.cache.MyCacheManager;
 import org.ext.dbutil.QueryHelper;
 
 public class WzglDao extends AbstractDao {
@@ -54,8 +55,10 @@ public class WzglDao extends AbstractDao {
 						Statics.dbNm,
 						"update gt_w_wz set bt=?,lx=?,nr=?,gxrq=now(),czr='admin' where id=?",
 						bean.getBt(), bean.getLx(), bean.getNr(), bean.getId());
-		if (rs > 0)
+		if (rs > 0) {
+			clearWzCache(bean.getId());
 			return Boolean.TRUE;
+		}
 		return bol;
 	}
 
@@ -67,8 +70,9 @@ public class WzglDao extends AbstractDao {
 	 * @throws UnsupportedEncodingException
 	 */
 	public String getContent(int sid) throws UnsupportedEncodingException {
-		return QueryHelper.query(Statics.dbNm, Gt_w_wz.class, _fcbid, sid).get(
-				0).getNr().toString();
+		return QueryHelper.queryList_cache(Statics.dbNm, Gt_w_wz.class,
+				"WZ_CACHE", "KEY_WEB_WZ_" + sid, _fcbid, sid).get(0).getNr()
+				.toString();
 	}
 
 	/**
@@ -78,7 +82,8 @@ public class WzglDao extends AbstractDao {
 	 * @return
 	 */
 	public Gt_w_wz getSWzByLxId(int lxid) {
-		List<Gt_w_wz> wzs = QueryHelper.query(Statics.dbNm, Gt_w_wz.class,
+		List<Gt_w_wz> wzs = QueryHelper.queryList_cache(Statics.dbNm,
+				Gt_w_wz.class, "WZ_CACHE", "KEY_WEB_WZLX_" + lxid,
 				"SELECT * FROM gt_w_wz g where lx = ? limit 1", lxid);
 		if (!wzs.isEmpty())
 			return wzs.get(0);
@@ -95,8 +100,10 @@ public class WzglDao extends AbstractDao {
 		boolean bol = Boolean.FALSE;
 		int rs = QueryHelper.update(Statics.dbNm,
 				"delete from gt_w_wz where id=?", delid);
-		if (rs > 0)
+		if (rs > 0) {
+			clearWzCache(Integer.valueOf(delid));
 			return Boolean.TRUE;
+		}
 		return bol;
 	}
 
@@ -107,12 +114,11 @@ public class WzglDao extends AbstractDao {
 	 * @return
 	 */
 	public boolean delete(Object[][] delids) throws Exception {
-		boolean bol = Boolean.FALSE;
 		int[] rs = QueryHelper.batch(Statics.dbNm,
 				"delete from gt_w_wz where id=?", delids);
 		if (rs.length == delids.length)
 			return Boolean.TRUE;
-		return bol;
+		return Boolean.FALSE;
 	}
 
 	public String get_sql() {
@@ -126,5 +132,12 @@ public class WzglDao extends AbstractDao {
 	public void initsql(String _sql, String _csql) {
 		this._sql = _sql;
 		this._csql = _csql;
+	}
+
+	/**
+	 * 清除文章缓存
+	 */
+	private void clearWzCache(int sid) {
+		MyCacheManager.clear("WZ_CACHE", "KEY_WEB_WZ_" + sid);
 	}
 }
