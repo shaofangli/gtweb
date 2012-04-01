@@ -17,7 +17,7 @@ public class WzglDao extends AbstractDao {
 	// 求出文章的总数
 	public static final String csql1 = "select count(id) from gt_w_wz where 1=?";
 	// 查出某个树节点下的所有文章
-	public static final String sql2 = "select * from gt_w_wz where lx in(SELECT id FROM gt_m_lx where pid=? or id = ?)";
+	public static final String sql2 = "select * from gt_w_wz where lx in(SELECT id FROM gt_m_lx where pid=? or id = ?) order by gxrq desc ";
 	// 求和查出某个树节点下的所有文章
 	public static final String csql2 = "select count(*) from gt_w_wz where lx in(SELECT id FROM gt_m_lx where pid=? or id = ?)";
 

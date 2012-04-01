@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -20,6 +20,73 @@
         	text-decoration: none;
         }
     </style>
+	<script type="text/javascript">
+	
+	var news_lxid;//新闻类型
+	var dq_page=1;//当前页
+	//新闻总条数
+	function forsub(zs){
+	var jlobj=document.getElementById("jl");
+	    jlobj.value=zs;
+	}
+	function lx_page(lxid){
+	news_lxid=lxid;
+	}
+	//首页
+function syfirst(){
+    var dobj = document.getElementById("cq_pg");
+	var ifobj = document.getElementById("xw-list-frame");
+	var dq_pgid = 1;
+	ifobj.src="/gtweb/fast/web/news/"+news_lxid+"/list?rpage="+dq_pgid;
+	dobj.value=dq_pgid;
+}
+//上页
+function syprev(){
+     var dobj = document.getElementById("cq_pg");
+	var ifobj = document.getElementById("xw-list-frame");
+	var dq_pgid = parseInt(dobj.value)-1;
+	if(dq_pgid<1){
+	    dq_pgid=1;
+	}
+	ifobj.src="/gtweb/fast/web/news/"+news_lxid+"/list?rpage="+dq_pgid;
+	dobj.value=dq_pgid;
+}
+//下页
+function xynext(){
+	var dobj = document.getElementById("cq_pg");
+	var ifobj = document.getElementById("xw-list-frame");
+	var dq_pgid = parseInt(dobj.value)+1;
+	
+	var jlobj=document.getElementById("jl");
+	
+	var dq_pgid1 = Math.floor(jlobj.value/10);
+	if(jlobj.value%10>0){
+	    dq_pgid1 = Math.floor(jlobj.value/10)+1;
+	}
+	if(dq_pgid>dq_pgid1){
+	    dq_pgid=dq_pgid1;
+	}
+	ifobj.src="/gtweb/fast/web/news/"+news_lxid+"/list?rpage="+dq_pgid;
+	dobj.value=dq_pgid;
+}
+function mylast(){
+    var dobj = document.getElementById("cq_pg");
+	
+    var ifobj = document.getElementById("xw-list-frame");
+	
+	var jlobj=document.getElementById("jl");
+	
+	var dq_pgid = Math.floor(jlobj.value/10);
+	if(jlobj.value%10>0){
+	    dq_pgid = Math.floor(jlobj.value/10)+1;
+	}
+	
+	ifobj.src="/gtweb/fast/web/news/"+news_lxid+"/list?rpage="+dq_pgid;
+	dobj.value=dq_pgid;
+	
+
+}
+    </script>
 </head>
 
 <body>
@@ -27,40 +94,49 @@
 	<!--------头部区域-------->
 		<div id="header">  
 			<div id="logo"><img src="${request.contextPath}/css/images/logo.png" width="160" height="85" align="left" /></div>
+		</div>
+		<div id="menu_bg">
 			<div id="menu">
-			<ul>
-				<li><a href="${request.contextPath}/fast/web/index">首页</a></li>
+			  <ul>
+				<li><a href="${request.contextPath}/fast/web/index">首  页</a></li>
+				<li><a href="${request.contextPath}/fast/web/qualification">公司简介</a></li>
 				<li><a href="${request.contextPath}/fast/web/news" class="active">新闻动态</a></li>
-				<li><a href="${request.contextPath}/fast/web/qualification">公司资质</a></li>
 				<li><a href="${request.contextPath}/fast/web/solution">解决方案</a></li>
-				<li><a href="${request.contextPath}/fast/web/about">关于我们</a></li>
+				<li><a href="${request.contextPath}/fast/web/about">人才招聘</a></li>
 				<li><a href="${request.contextPath}/fast/web/contact">联系我们</a></li>
 			</ul>
-			</div>
-			<div id="banner"></div>
-		</div></div>
+		  </div></div></div>
 		<!--------主体区域-------->
 		<div id="main2">
 			<div id="left_pan">
 			<!-- 新闻类型列表 -->
     			<ul>
     			#foreach($lx in $lxs.rows)
-        				<li><a target="xw-list-frame" href="${request.contextPath}/fast/web/news/$lx.id/list">$lx.nm</a></li>
+        				<li><a target="xw-list-frame" href="${request.contextPath}/fast/web/news/$lx.id/list" onclick="lx_page($lx.id);">$lx.nm</a></li>
     			#end
     			</ul>
 			</div>
 			<div id="rightPan">
 				<!-- 新闻列表 -->
-				<iframe id="xw-list-frame" name="xw-list-frame" frameborder="0" src="${request.contextPath}/fast/web/news/6/list" width="610px" height="400px" marginWidth=0 frameSpacing=0 marginHeight=0 frameBorder=0 noResize scrolling=auto vspale="0"></iframe>
+				<iframe id="xw-list-frame" name="xw-list-frame" frameborder="0" src="${request.contextPath}/fast/web/news/6/list" width="610px" height="400px" marginWidth=0 frameSpacing=0 marginHeight=0 frameBorder=0 noResize scrolling=auto vspale="0">
+				</iframe>
+				<div align="center">
+				     <a href="#" onclick="syfirst();">首页</a>
+                     <a href="#" onclick="syprev();">上一页</a>
+                     <a href="#" onclick="xynext();">下一页</a>
+                     <a href="#" onclick="mylast();">末页</a>
+                     <input type="hidden" id="cq_pg" value="1" />
+					 <input type="hidden" id="jl"/>
+                </div>
 			</div>
 		</div>
 		<!--页面底部,(版权说明)-->
 		  <div id="footer_bg">
 		  	<div id="footer">
-	 		  <p style="float: none; text-align: right;"><a href="#">湖南省港通科技有限公司</a><br/>
-	 		  	<a>公司邮箱:stoneling@126.com</a><br/>
+	 		  <p style="float: none;"><a href="#">湖南省港通科技有限公司</a>
+	 		  	<a> &nbsp;&nbsp;&nbsp;&nbsp;公司邮箱:stoneling@126.com</a><br/>
 		&copy; Copyright 2012,公司地址: <a href="#">湖南省长沙市德雅路583号</a></p>
-				 </div>
+		 	 </div>
 		  </div>
 	</div>
 </body>

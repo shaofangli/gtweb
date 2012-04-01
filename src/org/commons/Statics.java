@@ -6,7 +6,7 @@ public class Statics {
 	public static final int TP_SY_WIDTH = 663;
 	public static final int TP_SY_HEIGHT = 310;
 	public static final String dbNm = "mysql5";// 默认数据库
-	public static final int pcount = 50;// 默认分页每页显示
+	public static final int pcount = 10;// 默认分页每页显示
 	public static final int csyimg = 5;// 首页图片张数
 	public static final String UPLOAD_IMG_PATH = "/uploadfiles/images/";// 上传文件的保存路径，相对于应用的根目录
 	public static final String UPLOAD_FILE_TEMP = "/uploadfiles/tmp/";// 上传文件的临时保存路径，相对于应用的根目录
